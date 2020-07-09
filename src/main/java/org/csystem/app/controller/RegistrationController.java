@@ -1,5 +1,6 @@
 package org.csystem.app.controller;
 
+import org.csystem.app.model.User;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,7 +16,6 @@ public class RegistrationController {
     @PostMapping("/register")
     public String create()
     {
-        //..userCreation
         return "register.html";
     }
 }
