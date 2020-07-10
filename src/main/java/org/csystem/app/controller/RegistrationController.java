@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.util.Optional;
 
 @RestController
 public class RegistrationController {
@@ -34,8 +35,8 @@ public class RegistrationController {
         if (bindingResult.hasErrors())
             return new ResponseEntity<>("ali", HttpStatus.BAD_REQUEST);
 
-        var ufs = new UserFormToUser();
-        var usr = ufs.convert(userForm);
+        UserFormToUser ufs = new UserFormToUser();
+        User usr = ufs.convert(userForm);
 
         if(m_userService.isUserExist(usr))
             return new ResponseEntity<>("User already exist", HttpStatus.OK);

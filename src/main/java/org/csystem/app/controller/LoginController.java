@@ -2,6 +2,7 @@ package org.csystem.app.controller;
 
 import org.csystem.app.converter.UserFormToUser;
 import org.csystem.app.dtos.UserForm;
+import org.csystem.app.entity.User;
 import org.csystem.app.service.IUserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.util.Optional;
 
 @RestController
 public class LoginController {
@@ -33,8 +35,8 @@ public class LoginController {
         if (bindingResult.hasErrors())
             return new ResponseEntity<>("login.html", HttpStatus.OK);
 
-        var ltu = new UserFormToUser();
-        var usrOpt = m_userService.controlForLogin(ltu.convert(loginForm));
+        UserFormToUser ltu = new UserFormToUser();
+        Optional<User> usrOpt = m_userService.controlForLogin(ltu.convert(loginForm));
         if (usrOpt.isEmpty())
             return new ResponseEntity<>("Hatali kullanici adi yada sifre", HttpStatus.OK);
 
