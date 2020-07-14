@@ -34,6 +34,7 @@ public class LoginController {
     {
         return new ResponseEntity<>("login.html", HttpStatus.OK);
     }
+
     @PostMapping(value = "/login", produces = "application/json")
     public ResponseEntity<LoginResult> login(@Valid LoginForm loginForm, BindingResult bindingResult)
     {
@@ -44,7 +45,7 @@ public class LoginController {
         LoginFormToUser loginToUser = new LoginFormToUser();
         Optional<User> usrOpt = m_userService.controlForLogin(loginToUser.convert(loginForm));
 
-        return usrOpt.map(user -> new ResponseEntity<>(new UserToLoginResult().convert(user),HttpStatus.OK))
-                .orElseGet(() ->     ResponseEntity.ok().build());
+        return usrOpt.map(user -> new ResponseEntity<>(new UserToLoginResult().convert(user), HttpStatus.OK))
+                .orElseGet(() -> ResponseEntity.ok().build());
     }
 }
