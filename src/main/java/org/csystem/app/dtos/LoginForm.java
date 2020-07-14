@@ -1,26 +1,19 @@
 package org.csystem.app.dtos;
 
+public class LoginForm {
 
-public class UserForm {
     private String m_username;
 
-    private String m_email;
 
     private String m_password;
 
-    public UserForm()
-    {
 
-    }
-    public UserForm(String username, String password)
-    {
-    }
-    public UserForm(String username, String email, String password)
+    public LoginForm(String username, String password)
     {
         m_username = username;
-        m_email = email;
         m_password = password;
     }
+
 
     public String getUsername()
     {
@@ -32,15 +25,6 @@ public class UserForm {
         m_username = username;
     }
 
-    public String getEmail()
-    {
-        return m_email;
-    }
-
-    public void setEmail(String email)
-    {
-        m_email = email;
-    }
 
     public String getPassword()
     {
