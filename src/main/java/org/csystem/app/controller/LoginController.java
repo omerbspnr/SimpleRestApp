@@ -37,10 +37,8 @@ public class LoginController {
 
         UserFormToUser ltu = new UserFormToUser();
         Optional<User> usrOpt = m_userService.controlForLogin(ltu.convert(loginForm));
-        if (usrOpt.isEmpty())
-            return new ResponseEntity<>("Hatali kullanici adi yada sifre", HttpStatus.OK);
 
-        return new ResponseEntity<>(usrOpt.get().toString(), HttpStatus.OK);
-
+        return usrOpt.map(user -> ResponseEntity.ok(user.toString()))
+                .orElseGet(() -> ResponseEntity.ok("Hatali kullanici adi yada sifre"));
     }
 }
