@@ -24,18 +24,16 @@ public class UserService implements IUserService {
     @Override
     public User save(User u)
     {
-        u.setPassword(m_encoder.encode(u.getPassword()));
-        System.out.printf("Kayıt sifresi : %s%n", u.getPassword());
         return m_userRepository.save(u);
     }
+
     @Override
     public Optional<User> controlForLogin(User u)
     {
-        u.setPassword(m_encoder.encode(u.getPassword()));
-        System.out.printf("Giris sifresi : %s%n",u.getPassword());
         return StreamSupport
-                .stream(m_userRepository.findAll().spliterator(),false)
-                .filter(i -> i.getPassword().equals(u.getPassword()) && i.getUsername().equals(u.getUsername()))
+                .stream(m_userRepository.findAll().spliterator(), false)
+                .filter(i -> i.getUsername().equals(u.getUsername())
+                        && m_encoder.matches(u.getPassword(), i.getPassword()))
                 .findFirst();
     }
 
@@ -43,9 +41,9 @@ public class UserService implements IUserService {
     public boolean isUserExist(User u)
     {
 
-        return  StreamSupport
-            .stream(m_userRepository.findAll().spliterator(),false)
-            .anyMatch(i -> i.getUserEmail().equals(u.getUserEmail()) || i.getUsername().equals(u.getUsername()));
+        return StreamSupport
+                .stream(m_userRepository.findAll().spliterator(), false)
+                .anyMatch(i -> i.getUserEmail().equals(u.getUserEmail()) || i.getUsername().equals(u.getUsername()));
 
     }
 }
