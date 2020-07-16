@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.Optional;
@@ -36,7 +37,7 @@ public class LoginController {
     }
 
     @PostMapping(value = "/login", produces = "application/json")
-    public ResponseEntity<LoginResult> login(@Valid LoginForm loginForm, BindingResult bindingResult)
+    public ResponseEntity<String> login(@Valid LoginForm loginForm, BindingResult bindingResult, HttpSession httpSession)
     {
 
         if (bindingResult.hasErrors())
@@ -45,7 +46,11 @@ public class LoginController {
         LoginFormToUser loginToUser = new LoginFormToUser();
         Optional<User> usrOpt = m_userService.controlForLogin(loginToUser.convert(loginForm));
 
-        return usrOpt.map(user -> new ResponseEntity<>(new UserToLoginResult().convert(user), HttpStatus.OK))
-                .orElseGet(() -> ResponseEntity.ok().build());
+        if (!usrOpt.isPresent())
+            return new ResponseEntity<>("Kullanıcı adı veya sifre basarisiz",HttpStatus.OK);
+
+        httpSession.setAttribute("userInfo",new UserToLoginResult().convert(usrOpt.get()));
+
+        return ResponseEntity.status(HttpStatus.MOVED_PERMANENTLY).header(HttpHeaders.LOCATION,"/").build();
     }
 }

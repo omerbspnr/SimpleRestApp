@@ -6,13 +6,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import java.util.Optional;
 
 @RestController
 public class HomeController {
     @GetMapping("/")
-    public ResponseEntity<String> index(@Valid LoginResult loginResult)
+    public ResponseEntity<LoginResult> index(@Valid LoginResult loginResult, HttpSession httpSession)
     {
-        return new ResponseEntity<>("index", HttpStatus.OK);
+        Optional<LoginResult> res =  Optional.ofNullable((LoginResult) httpSession.getAttribute("userInfo"));
+
+        return res.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.ok().build());
     }
 }
