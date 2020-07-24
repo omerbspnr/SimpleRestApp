@@ -1,9 +1,14 @@
 package org.csystem.app.controller;
 
-import org.csystem.app.converter.UserFormToUser;
-import org.csystem.app.dtos.UserForm;
+import org.csystem.app.converter.LoginFormToUser;
+import org.csystem.app.converter.RegistrationFormToUser;
+import org.csystem.app.converter.UserToLoginResult;
+import org.csystem.app.dtos.LoginForm;
+import org.csystem.app.dtos.LoginResult;
+import org.csystem.app.dtos.RegistrationForm;
 import org.csystem.app.entity.User;
 import org.csystem.app.service.IUserService;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -11,7 +16,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import java.net.URI;
 import java.util.Optional;
 
 @RestController
@@ -24,21 +31,33 @@ public class LoginController {
     }
 
     @GetMapping("/login")
-    public ResponseEntity<String> page()
+    public ResponseEntity<String> page(HttpSession httpSession)
     {
+        System.out.println("selam");
+        if (httpSession.getAttribute("userInfo") != null)
+            return ResponseEntity.status(HttpStatus.MOVED_PERMANENTLY).header(HttpHeaders.LOCATION,"/").build();
+
         return new ResponseEntity<>("login.html", HttpStatus.OK);
     }
+
     @PostMapping(value = "/login", produces = "application/json")
-    public ResponseEntity<String> login(@Valid UserForm loginForm, BindingResult bindingResult)
+    public ResponseEntity<String> login(@Valid LoginForm loginForm, BindingResult bindingResult, HttpSession httpSession)
     {
 
         if (bindingResult.hasErrors())
-            return new ResponseEntity<>("login.html", HttpStatus.OK);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
 
-        UserFormToUser ltu = new UserFormToUser();
-        Optional<User> usrOpt = m_userService.controlForLogin(ltu.convert(loginForm));
+        if (httpSession.getAttribute("userInfo") != null)
+            return ResponseEntity.status(HttpStatus.MOVED_PERMANENTLY).header(HttpHeaders.LOCATION, "/").build();
 
-        return usrOpt.map(user -> ResponseEntity.ok(user.toString()))
-                .orElseGet(() -> ResponseEntity.ok("Hatali kullanici adi yada sifre"));
+        LoginFormToUser loginToUser = new LoginFormToUser();
+        Optional<User> usrOpt = m_userService.controlForLogin(loginToUser.convert(loginForm));
+
+        if (!usrOpt.isPresent())
+            return new ResponseEntity<>("Kullanıcı adı veya sifre gecersiz",HttpStatus.OK);
+
+        httpSession.setAttribute("userInfo",new UserToLoginResult().convert(usrOpt.get()));
+
+        return ResponseEntity.status(HttpStatus.MOVED_PERMANENTLY).header(HttpHeaders.LOCATION,"/").build();
     }
 }
