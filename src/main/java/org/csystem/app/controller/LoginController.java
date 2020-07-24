@@ -31,8 +31,12 @@ public class LoginController {
     }
 
     @GetMapping("/login")
-    public ResponseEntity<String> page()
+    public ResponseEntity<String> page(HttpSession httpSession)
     {
+        System.out.println("selam");
+        if (httpSession.getAttribute("userInfo") != null)
+            return ResponseEntity.status(HttpStatus.MOVED_PERMANENTLY).header(HttpHeaders.LOCATION,"/").build();
+
         return new ResponseEntity<>("login.html", HttpStatus.OK);
     }
 
@@ -43,11 +47,14 @@ public class LoginController {
         if (bindingResult.hasErrors())
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
 
+        if (httpSession.getAttribute("userInfo") != null)
+            return ResponseEntity.status(HttpStatus.MOVED_PERMANENTLY).header(HttpHeaders.LOCATION, "/").build();
+
         LoginFormToUser loginToUser = new LoginFormToUser();
         Optional<User> usrOpt = m_userService.controlForLogin(loginToUser.convert(loginForm));
 
         if (!usrOpt.isPresent())
-            return new ResponseEntity<>("Kullanıcı adı veya sifre basarisiz",HttpStatus.OK);
+            return new ResponseEntity<>("Kullanıcı adı veya sifre gecersiz",HttpStatus.OK);
 
         httpSession.setAttribute("userInfo",new UserToLoginResult().convert(usrOpt.get()));
 

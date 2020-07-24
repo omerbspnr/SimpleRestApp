@@ -11,9 +11,9 @@ import java.util.stream.StreamSupport;
 
 @Service
 public class UserService implements IUserService {
-    private IUserRepository m_userRepository;
+    private final IUserRepository m_userRepository;
 
-    private PasswordEncoder m_encoder;
+    private final PasswordEncoder m_encoder;
 
     public UserService(IUserRepository userRepository, PasswordEncoder encoder)
     {
@@ -44,7 +44,7 @@ public class UserService implements IUserService {
 
         return StreamSupport
                 .stream(m_userRepository.findAll().spliterator(), false)
-                .anyMatch(i -> i.getUserEmail().equals(u.getUserEmail()) || i.getUsername().equals(u.getUsername()));
+                .anyMatch(i -> i.getUsername().equals(u.getUsername()) || i.getUserEmail().equals(u.getUserEmail()));
 
     }
 }

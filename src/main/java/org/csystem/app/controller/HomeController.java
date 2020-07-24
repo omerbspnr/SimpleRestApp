@@ -13,7 +13,7 @@ import java.util.Optional;
 @RestController
 public class HomeController {
     @GetMapping("/")
-    public ResponseEntity<LoginResult> index(@Valid LoginResult loginResult, HttpSession httpSession)
+    public ResponseEntity<LoginResult> index(HttpSession httpSession)
     {
         Optional<LoginResult> res =  Optional.ofNullable((LoginResult) httpSession.getAttribute("userInfo"));
 

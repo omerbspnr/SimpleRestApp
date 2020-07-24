@@ -1,11 +1,24 @@
 package org.csystem.app.dtos;
 
 
+import org.hibernate.validator.constraints.Length;
+
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
 public class RegistrationForm {
+
+    @NotBlank
+    @Length(max = 16)
     private String m_username;
 
+    @NotBlank
+    @Email(message = "invalid email")
     private String m_email;
 
+    @NotBlank
+    @Length(min = 8, max = 32)
     private String m_password;
 
     public RegistrationForm()

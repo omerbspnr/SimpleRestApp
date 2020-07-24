@@ -1,10 +1,18 @@
 package org.csystem.app.dtos;
 
+import org.hibernate.validator.constraints.Length;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
 public class LoginForm {
 
+    @NotBlank
+    @Length(max = 16)
     private String m_username;
 
-
+    @NotBlank
+    @Length(min = 8)
     private String m_password;
 
 
