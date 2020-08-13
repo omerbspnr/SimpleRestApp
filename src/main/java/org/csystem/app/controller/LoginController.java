@@ -34,7 +34,6 @@ public class LoginController {
     @GetMapping("/login")
     public ResponseEntity<String> page(HttpSession httpSession)
     {
-        System.out.println("selam");
         if (httpSession.getAttribute("userInfo") != null)
             return ResponseEntity.status(HttpStatus.MOVED_PERMANENTLY).header(HttpHeaders.LOCATION,"/").build();
 
